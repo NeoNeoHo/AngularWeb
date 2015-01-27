@@ -1,0 +1,6 @@
+Your app should now be live at 
+  http://node-maxyychen.rhcloudcom
+  After app modification run
+    grunt build
+    Then deploy with
+      grunt buildcontrol:openshift

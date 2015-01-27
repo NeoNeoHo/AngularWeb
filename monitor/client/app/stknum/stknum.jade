@@ -1,0 +1,34 @@
+div(ng-include='"components/navbar/navbar.html"')
+
+header#banner.hero-unit
+  .container
+    p.lead Stock Number Effects - Monte Carlo Analysis
+
+.container
+  .row
+    .col-lg-12.main
+      .col-md-3.col-lg-3.col-sm-12
+        .row
+          .btn-group
+            label.btn.btn-primary(ng-model="market",btn-radio="'cn'",ng-click="changeMarket('cn')") CN
+            label.btn.btn-primary(ng-model="market",btn-radio="'hk'",ng-click="changeMarket('hk')") HK
+            label.btn.btn-primary(ng-model="market",btn-radio="'jp'",ng-click="changeMarket('jp')") JP
+            label.btn.btn-primary(ng-model="market",btn-radio="'au'",ng-click="changeMarket('au')") AU
+        .row
+          .btn-group
+            label.btn.btn-primary(ng-model="target",btn-radio="'AnnR'",ng-click="changeType('AnnR')") AnnR
+            label.btn.btn-primary(ng-model="target",btn-radio="'Sharpe'",ng-click="changeType('Sharpe')") Sharpe
+            label.btn.btn-primary(ng-model="target",btn-radio="'MDD'",ng-click="changeType('MDD')") MDD
+
+      .col-md-9.col-lg-9.col-sm-12
+        highchart(id="chart1",config="stknumChartConfig")
+
+
+
+
+
+footer.footer
+  .container
+    p
+      | Work Hard | Work Smart | Work Together
+
