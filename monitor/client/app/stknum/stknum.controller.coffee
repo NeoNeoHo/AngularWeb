@@ -23,48 +23,19 @@ angular.module 'nodeApp'
 
   $scope.date = new Date()
   $scope.dt = $scope.date
-  $scope.NavChartConfig = {
-    useHighStocks: true,
-    options: {
-      tooltip: {
-        style: {
-          padding: 10,
-          fontWeight: 'bold'
-        },
-        enabled: true
-      },
-      legend: {
-        enabled: true
-      }
-    },
-    chart: {
-      plotBorderWidth: 2,
-      zoomType: 'x',
-    },
-    title: {
-      text: 'Number of Stocks Effects (100 Random Samples)'
-    },
-    legend: {
-      enabled: false
-    },
-    xAxis: {
-      labels: {
-        format: '{value:%Y-%m}'
-      }
-    },
-    yAxis: {
-      title: {text: null}
-    },
-    series: [{
-      name: "Nav",
-      data:[]
-    }]
-  }
+  $scope.NavChartConfig = get_chart_config()
 
   $scope.updateChart = () ->
-    $http.get('/api/navmonitor/'+$scope.market+'/'+getFormattedDate($scope.dt)).success (rtn) ->
-      $scope.NavChartConfig.series[0].data = rtn.data
-      console.log($scope.NavChartConfig.series)
+    $http.get('/api/navmonitor/'+$scope.market).success (rtn_datas) ->
+      rtn = rtn_datas.model_nav
+      $scope.NavChartConfig = get_chart_config()
+      $scope.NavChartConfig.title.text = "Model Monitor"
+      $scope.NavChartConfig.yAxis.title.text = "Model NAV"
+      $scope.NavChartConfig.series.push({ name: "Model Nav", color: "#000000", data: rtn.data})
+      $scope.NavChartConfig.series.push({ name: "SMA 20", color: "#FF0000", data: SMA(rtn.data,20)})
+      $scope.NavChartConfig.series.push({ name: "SMA 50", color: "#0000FF", data: SMA(rtn.data,50)})
+      $scope.NavChartConfig.series.push({ name: "SMA 100", color: "#006400", data: SMA(rtn.data,100)})
+      console.log($scope.NavChartConfig)
 
   $scope.updateChart()
 

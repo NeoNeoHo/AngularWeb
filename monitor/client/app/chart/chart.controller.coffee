@@ -27,9 +27,6 @@ angular.module 'nodeApp'
     $scope.type = aType
     $scope.chartConfig.title.text = 'Top 100 Vender Class Distribution ' + capitaliseFirstLetter($scope.type)
 
-  $scope.changeNdays = (ndays)->
-    $scope.ndays = ndays
-    $scope.update_chart()
 
   $scope.changeMarket = (aMarket)->
     $scope.market = aMarket
@@ -102,7 +99,6 @@ angular.module 'nodeApp'
         bcode = item.code.split(" ")[0]
         if bcode not in $scope.tcodes
           $scope.tcodes.push(item.code.split(" ")[0])
-#        console.log $scope.tcodes
       $scope.update_icodes()
 
 
@@ -114,22 +110,27 @@ angular.module 'nodeApp'
       for item in rtn.data
         bcode = item.code.split(" ")[0]
         item = {
-          code: bcode,
-          'vender': item.vender.replace(" Index", "")
-          'ret_2_days %': (item.ret_2_days * 100).toFixed(2)
-          'ret_20_days %': (item.ret_20_days * 100).toFixed(2)
-          'ret_50_days %': (item.ret_50_days * 100).toFixed(2)
-          'ret_100_days %': (item.ret_100_days * 100).toFixed(2)
-          'dt - mt': (item.dt_minus_mt).toFixed(2)
-          'dt+wt+mt': (item.dtwtmt).toFixed(2)
-          'strength': (item.abs_dtwtmt).toFixed(2)
-          'wt': (item.wt).toFixed(2)
+          'code': bcode,
+          'cname': item.cname,
+          'vender': item.vender.replace(" Index", ""),
+          'inventory': item.inventory_or_not,
+          'ret_2 %': (item.ret_2_days * 100).toFixed(2),
+          'ret_20 %': (item.ret_20_days * 100).toFixed(2),
+          'ret_50 %': (item.ret_50_days * 100).toFixed(2),
+          'ret_100 %': (item.ret_100_days * 100).toFixed(2),
+          'dt - mt': (item.dt_minus_mt).toFixed(2),
+          'dt+wt+mt': (item.dtwtmt).toFixed(2),
+          'strength': (item.abs_dtwtmt).toFixed(2),
+          'wt': (item.wt).toFixed(2),
+          'ma 20>50': item.ma_20 > item.ma_50,
+          'ma 50>100': item.ma_50 > item.ma_100,
+          'ma 20>50>100': (item.ma_20 > item.ma_50) && (item.ma_50 > item.ma_100)
         }
         $scope.myData.push(item)
 
 
   $scope.update_chart = () ->
-    $http.get('/api/alpha/'+$scope.market+'/'+getFormattedDate($scope.dt)+'/'+$scope.ndays).success (rtn) ->
+    $http.get('/api/alpha/'+$scope.market+'/'+getFormattedDate($scope.dt)).success (rtn) ->
       $scope.data = []
       $scope.venderClass = []
       for item in rtn.data
@@ -140,8 +141,6 @@ angular.module 'nodeApp'
 #        console.log $scope.venderClass
         $scope.chartConfig.series[0].data = $scope.data
         $scope.chartConfig.xAxis.categories = $scope.venderClass
-#        $scope.chartConfig.yAxis.currentMax = $scope.data[0]
-#        $scope.chartConfig.yAxis.currentMin = $scope.data[$scope.data.length-1]
         $scope.update_tcodes()
 
 

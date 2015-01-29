@@ -4,10 +4,10 @@ angular.module 'nodeApp'
 .controller 'NavbarCtrl', ($scope, $location) ->
   $scope.menu = [
     {
-      title: 'VenderClass'
+      title: 'Top100'
       link: '/chart'
     },{
-      title: 'Monitor'
+      title: 'Nav Monitor'
       link: '/stknum'
     }
 

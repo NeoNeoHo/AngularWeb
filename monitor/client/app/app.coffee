@@ -7,7 +7,9 @@ angular.module 'nodeApp', [
   'ui.router',
   'ui.bootstrap',
   'highcharts-ng',
-  'ui.grid'
+  'ui.grid',
+  'ui.grid.resizeColumns',
+  'ui.grid.moveColumns'
 ]
 .config ($stateProvider, $urlRouterProvider, $locationProvider) ->
   $urlRouterProvider

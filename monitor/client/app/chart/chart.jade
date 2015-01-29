@@ -2,7 +2,7 @@ div(ng-include='"components/navbar/navbar.html"')
 
 header#banner.hero-unit
   .container
-    p.lead Vender Class Monitor
+    p.lead Daily Top100 Stocks Monitor
 
 .container
   .row
@@ -13,30 +13,21 @@ header#banner.hero-unit
             label.btn.btn-primary(ng-model="market",btn-radio="'cn'",ng-click="changeMarket('cn')") CN
             label.btn.btn-primary(ng-model="market",btn-radio="'tw'",ng-click="changeMarket('tw')") TW
             label.btn.btn-primary(ng-model="market",btn-radio="'jp'",ng-click="changeMarket('jp')") JP
-        //.row
-        //  .btn-group
-        //    label.btn.btn-primary(ng-model="ndays",btn-radio="10",ng-click="changeNdays(10)") 10 days
-        //    label.btn.btn-primary(ng-model="ndays",btn-radio="20",ng-click="changeNdays(20)") 20 days
-        //    label.btn.btn-primary(ng-model="ndays",btn-radio="30",ng-click="changeNdays(30)") 30 days
-        //.row
-        //  .btn-group
-        //    label.btn.btn-primary(ng-model="type",btn-radio="'alpha'", ng-click="changeType('alpha')") Alpha
-        //    label.btn.btn-primary(ng-model="type",btn-radio="'count'", ng-click="changeType('count')",ng-disabled='true') Count
         .row
           datepicker(ng-model="dt",show-weeks="false",max-date="today",ng-click="update_chart()").datepicker
       .col-md-8.col-lg-8.col-sm-12
         highchart(id="chart1",config="chartConfig")
   .row
-    h3 Top 100
-    .nav.nav-tabs.nav-stacked.col-md-1.col-lg-1.col-sm-2.col-xs-3(ng-repeat='code in tcodes')
+    h3.btn.btn-primary.btn-block(ng-model="collapsedTop", ng-click="collapsedTop=!collapsedTop") Top 100
+    .nav.nav-tabs.nav-stacked.col-md-1.col-lg-1.col-sm-2.col-xs-3(ng-repeat='code in tcodes', ng-show="collapsedTop")
       div {{code}}
   .row
-    h3 Inventory
-    .nav.nav-tabs.nav-stacked.col-md-1.col-lg-1.col-sm-2.col-xs-3(ng-repeat='item in icodes')
+    h3.btn.btn-primary.btn-block(ng-model="collapsedInv", ng-click="collapsedInv=!collapsedInv") Inventory
+    .nav.nav-tabs.nav-stacked.col-md-1.col-lg-1.col-sm-2.col-xs-3(ng-repeat='item in icodes', ng-show="collapsedInv")
       div(ng-class="{true:'highlight', false:''}[item.highlight]") {{item.code}}
   .row
-    h3 Temp Table
-    div(ui-grid="gridOptions")
+    h3 Top 100 Score
+    div(ui-grid="gridOptions", ui-grid-resize-columns, ui-grid-move-columns)
 footer.footer
   .container
     p
