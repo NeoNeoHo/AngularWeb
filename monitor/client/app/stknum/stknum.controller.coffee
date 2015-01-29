@@ -7,15 +7,25 @@ angular.module 'nodeApp'
 #    'AnnR',
 #  'Sharpe',
 #  'MDD'
-  $scope.date = new Date()
 
-  $scope.stknumChartConfig = {
+  capitaliseFirstLetter = (string)->
+    return string.charAt(0).toUpperCase() + string.slice(1);
+
+  getFormattedDate = (date)->
+    year = date.getFullYear()
+    month = (1 + date.getMonth()).toString()
+    if month.length == 1
+      month = '0' + month
+    day = date.getDate().toString()
+    if day.length == 1
+      day = '0' + day
+    year + '-' + month + '-' + day
+
+  $scope.date = new Date()
+  $scope.dt = $scope.date
+  $scope.NavChartConfig = {
+    useHighStocks: true,
     options: {
-      chart: {
-        type: 'boxplot',
-        renderTo: 'chartContainer',
-        reflow: true
-      },
       tooltip: {
         style: {
           padding: 10,
@@ -24,8 +34,12 @@ angular.module 'nodeApp'
         enabled: true
       },
       legend: {
-        enabled: false
+        enabled: true
       }
+    },
+    chart: {
+      plotBorderWidth: 2,
+      zoomType: 'x',
     },
     title: {
       text: 'Number of Stocks Effects (100 Random Samples)'
@@ -34,34 +48,23 @@ angular.module 'nodeApp'
       enabled: false
     },
     xAxis: {
-      categories: [],
-      title: {
-        text: 'Stock No.'
+      labels: {
+        format: '{value:%Y-%m}'
       }
     },
     yAxis: {
-      title: {
-        text: ""
-      }
+      title: {text: null}
     },
     series: [{
-      name: "",
-      data: []
+      name: "Nav",
+      data:[]
     }]
   }
 
   $scope.updateChart = () ->
-    $http.get('/api/mongodb/pag/stk_number_effects/'+$scope.market+"_big").success (data) ->
-      $scope.stk_effects_data = data.document.annr
-      if $scope.target == "Sharpe"
-        $scope.stk_effects_data = data.document.sharpe
-      if $scope.target == "MDD"
-        $scope.stk_effects_data = data.document.mdd
-      $scope.stk_num = data.document.stk_num
-      $scope.stknumChartConfig.xAxis.categories = $scope.stk_num
-      $scope.stknumChartConfig.series[0].data = $scope.stk_effects_data
-      $scope.stknumChartConfig.yAxis.title.text = $scope.target
-      $scope.stknumChartConfig.series[0].name = $scope.target
+    $http.get('/api/navmonitor/'+$scope.market+'/'+getFormattedDate($scope.dt)).success (rtn) ->
+      $scope.NavChartConfig.series[0].data = rtn.data
+      console.log($scope.NavChartConfig.series)
 
   $scope.updateChart()
 
