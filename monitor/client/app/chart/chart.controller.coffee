@@ -25,7 +25,7 @@ angular.module 'nodeApp'
 
   $scope.changeType = (aType)->
     $scope.type = aType
-    $scope.chartConfig.title.text = 'Top 100 Vender Class Distribution ' + capitaliseFirstLetter($scope.type)
+    $scope.chartConfig.title.text = 'Top 150 Vender Class Distribution ' + capitaliseFirstLetter($scope.type)
 
 
   $scope.changeMarket = (aMarket)->
@@ -37,7 +37,11 @@ angular.module 'nodeApp'
 
   $scope.gridOptions = {
     data: 'myData'
+    enableFiltering: true
+    enableGridMenu: true
   }
+
+  $scope.gridOptions_alpha = {data: 'myData_alpha'}
 
   $scope.chartConfig = {
     options: {
@@ -62,7 +66,7 @@ angular.module 'nodeApp'
       data: []
     }],
     title: {
-      text: 'Top 100 Vender Class Distribution ' + capitaliseFirstLetter($scope.type)
+      text: 'Top 150 Vender Class Distribution ' + capitaliseFirstLetter($scope.type)
     },
     loading: false,
     yAxis: {
@@ -114,20 +118,46 @@ angular.module 'nodeApp'
           'cname': item.cname,
           'vender': item.vender.replace(" Index", ""),
           'inventory': item.inventory_or_not,
+          'ret_2 %': parseFloat((item.ret_2_days * 100).toFixed(2)),
+          'ret_20 %': parseFloat((item.ret_20_days * 100).toFixed(2)),
+#          'ret_50 %': parseFloat((item.ret_50_days * 100).toFixed(2)),
+#          'ret_100 %': parseFloat((item.ret_100_days * 100).toFixed(2)),
+          'dt - mt': parseFloat((item.dt_minus_mt).toFixed(2)),
+          'dt+wt+mt': parseFloat((item.dtwtmt).toFixed(2)),
+          'strength': parseFloat((item.abs_dtwtmt).toFixed(2)),
+          'wt': parseFloat((item.wt).toFixed(2)),
+          'ma 20>50': item.ma_20 > item.ma_50,
+#          'ma 50>100': item.ma_50 > item.ma_100,
+#          'ma 20>50>100': (item.ma_20 > item.ma_50) && (item.ma_50 > item.ma_100)
+        }
+        $scope.myData.push(item)
+      $scope.update_top100_alpha_table()
+
+  $scope.update_top100_alpha_table = () ->
+    sqlstr = "select * from top100_stock_performance where market='"+$scope.market+
+      "' and da='"+getFormattedDate($scope.dt)+"' order by ret_2_days desc"
+    $http.post('/api/pgdb/query', {dbname:'www', sqlstring:sqlstr}).success (rtn) ->
+      $scope.myData_alpha = []
+      for item in rtn.data
+        bcode = item.code.split(" ")[0]
+        item = {
+          'code': bcode,
+          'cname': item.cname,
+          'vender': item.vender.replace(" Index", ""),
+          'inventory': item.inventory_or_not,
           'ret_2 %': (item.ret_2_days * 100).toFixed(2),
           'ret_20 %': (item.ret_20_days * 100).toFixed(2),
-          'ret_50 %': (item.ret_50_days * 100).toFixed(2),
-          'ret_100 %': (item.ret_100_days * 100).toFixed(2),
+#          'ret_50 %': (item.ret_50_days * 100).toFixed(2),
+#          'ret_100 %': (item.ret_100_days * 100).toFixed(2),
           'dt - mt': (item.dt_minus_mt).toFixed(2),
           'dt+wt+mt': (item.dtwtmt).toFixed(2),
           'strength': (item.abs_dtwtmt).toFixed(2),
           'wt': (item.wt).toFixed(2),
           'ma 20>50': item.ma_20 > item.ma_50,
-          'ma 50>100': item.ma_50 > item.ma_100,
-          'ma 20>50>100': (item.ma_20 > item.ma_50) && (item.ma_50 > item.ma_100)
+#          'ma 50>100': item.ma_50 > item.ma_100,
+#          'ma 20>50>100': (item.ma_20 > item.ma_50) && (item.ma_50 > item.ma_100)
         }
-        $scope.myData.push(item)
-
+        $scope.myData_alpha.push(item)
 
   $scope.update_chart = () ->
     $http.get('/api/alpha/'+$scope.market+'/'+getFormattedDate($scope.dt)).success (rtn) ->

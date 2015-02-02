@@ -3,6 +3,7 @@
 var pg = require('pg');
 var Q = require('q');
 var dbconfig = require('../dbconfig');
+var market_config = require('../market_config');
 
 // Get a single thing
 exports.getNav = function(req, res) {
@@ -16,6 +17,7 @@ exports.getNav = function(req, res) {
   Q.all(promises)
     .then(function(data){
       render_data.model_nav = data[0];
+      console.log(market_config.cn.index_code);
       return res.json(render_data);
     });
 };
@@ -50,4 +52,10 @@ var get_model_nav = function(market){
     });
   });
   return def.promise;
+};
+
+var get_index_nav = function(market){
+  var def = Q.defer();
+  var conString = "postgres://"+dbconfig.db99.user+":"+dbconfig.db99.passwd+"@"+
+      dbconfig.db99.host+":"+dbconfig.db99.port+"/daily";
 };
